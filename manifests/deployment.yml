@@ -19,7 +19,7 @@ spec:
             #secretName: css-auth-properties
       containers:
         - name: "tinc-router"
-          image: "cssauth.azurecr.io/aksdevjpeastsandbox/route:v1"
+          image: "ghcr.io/morningswait/tinc-router:latest"
           command: [ "/bin/bash", "-c", "--" ]
           args: [ "while true; do sleep 30; done;" ]
           env:
