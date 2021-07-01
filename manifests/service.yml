@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: "cam-auth-uat"
+    namespace : "product"
+    labels:
+        app: "cam-auth-uat"
+spec:
+    #type: LoadBalancer
+    type: ClusterIP
+    ports:
+    - port: 9000
+      #targetPort: 9000
+      protocol: TCP
+      name: http
+    selector:
+        app: "cam-auth"
