@@ -1,17 +1,29 @@
 apiVersion: v1
 kind: Service
 metadata:
-    name: "cam-auth-uat"
+    name: "tinc-router-service"
     namespace : "product"
     labels:
-        app: "cam-auth-uat"
+        app: "tinc-router-service"
 spec:
-    #type: LoadBalancer
-    type: ClusterIP
+    type: LoadBalancer
+    #type: ClusterIP
     ports:
-    - port: 9000
-      #targetPort: 9000
+    - port: 22
+      targetPort: 22
       protocol: TCP
-      name: http
+      name: ssh-tcp
+    - port: 22
+      targetPort: 22
+      protocol: UDP
+      name: ssh-udp
+    - port: 655
+      targetPort: 655
+      protocol: TCP
+      name: tinc-vpn-tcp
+    - port: 655
+      targetPort: 655
+      protocol: UDP
+      name: tinc-vpn-udp
     selector:
-        app: "cam-auth"
+        app: "tinc-router"
