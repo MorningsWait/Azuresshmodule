@@ -1,68 +1,47 @@
 apiVersion : apps/v1
 kind: Deployment
 metadata:
-  name: "tinc-mesh-tunnel"
+  name: "tinc-router"
   namespace : "product"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: "tinc-mesh-tunnel"
+      app: "tinc-router"
   template:
     metadata:
       labels:
-        app: "tinc-mesh-tunnel"
+        app: "tinc-router"
     spec:
       volumes:
-        - name: css-tinc-properties
-          secret:
-            secretName: css-tinc-properties
-        - name: test-volume
-          hostPath:
-            # directory location on host
-            path: /etc/tinc/
-            # this field is optional
-            type: Directory
-        - name: test-volume1
-          hostPath:
-            # directory location on host
-            path: /dev/net/
-            # this field is optional
-            type: Directory
-        - name: test-volume2
-          hostPath:
-             path: /proc/sys/net/ipv4/conf/
-             type: Directory
-        #- name: test-volume3
-          #hostPath:
-             #path: /proc/sys/net/ipv4/conf/tun0/
-             #type: Directory
-            
+        - name: css-auth-properties
+          #secret:
+            #secretName: css-auth-properties
       containers:
-        - name: "tinc-mesh-tunnel"
-          image: "cssauth.azurecr.io/aksdevjpeastsandbox:latest"
+        - name: "tinc-router"
+          image: "cssauth.azurecr.io/aksdevjpeastsandbox/route:v1"
+          command: [ "/bin/bash", "-c", "--" ]
+          args: [ "while true; do sleep 30; done;" ]
+          env:
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+          ports:
+          - containerPort: 22
+            protocol: UDP
+          - containerPort: 655
+            protocol: UDP
+          - containerPort: 22
+            protocol: TCP
+          - containerPort: 655
+            protocol: TCP
+          stdin: true
           securityContext:
             privileged: true
-          volumeMounts:
-          - mountPath: /etc/tinc/
-            name: test-volume
-          - mountPath: /dev/net/
-            name: test-volume1
-          - mountPath: /sysproc/sys/net/ipv4/conf/
-            name: test-volume2
-          #- mountPath: /proc/sys/net/ipv4/conf/tun0/
-            #name: test-volume3
-            #name: css-tinc-properties
-          #Mounts:
-            #/etc/tinc from mssqldb (rw)
-                                     
-          #volumeMounts:
-           # - mountPath: /opt
-           #   name: css-tinc-properties
-          #lifecycle:
-            #postStart:
-              #exec:
-                #command:
-                 # - /bin/sh
-                 # - -c
-                 # - cp /opt/* /etc/tinc/floydonet/
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "/app/route.sh"]
+      
+               
