@@ -13,10 +13,7 @@ spec:
       labels:
         app: "tinc-router"
     spec:
-      volumes:
-        - name: css-auth-properties
-          #secret:
-            #secretName: css-auth-properties
+      
       containers:
         - name: "tinc-router"
           image: "ghcr.io/morningswait/tinc-router:latest"
